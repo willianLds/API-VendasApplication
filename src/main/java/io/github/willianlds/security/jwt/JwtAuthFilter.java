@@ -1,10 +1,9 @@
 package io.github.willianlds.security.jwt;
 
-import io.github.willianlds.service.impl.UsuarioServiceImpl;
+import io.github.willianlds.service.impl.UserServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,9 +16,9 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private JwtService jwtService;
-    private UsuarioServiceImpl usuarioService;
+    private UserServiceImpl usuarioService;
 
-    public JwtAuthFilter(JwtService jwtService, UsuarioServiceImpl usuarioService){
+    public JwtAuthFilter(JwtService jwtService, UserServiceImpl usuarioService){
         this.jwtService = jwtService;
         this.usuarioService = usuarioService;
     }

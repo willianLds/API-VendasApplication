@@ -2,12 +2,13 @@ package io.github.willianlds.config;
 
 import io.github.willianlds.security.jwt.JwtAuthFilter;
 import io.github.willianlds.security.jwt.JwtService;
-import io.github.willianlds.service.impl.UsuarioServiceImpl;
+import io.github.willianlds.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UsuarioServiceImpl usuarioService;
+    private UserServiceImpl userService;
 
     @Autowired
     private JwtService jwtService;
@@ -32,25 +33,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public OncePerRequestFilter jwtFilter(){
-        return new JwtAuthFilter(jwtService, usuarioService);
+        return new JwtAuthFilter(jwtService, userService);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(usuarioService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
     @Override
     protected void configure( HttpSecurity http ) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/api/clientes/**")
+                    .antMatchers("/api/clients/**")
                         .hasAnyRole("USER", "ADMIN")
-                    .antMatchers("/api/pedidos/**")
+                    .antMatchers("/api/orders/**")
                         .hasAnyRole("USER", "ADMIN")
-                    .antMatchers("/api/produtos/**")
+                    .antMatchers("/api/products/**")
                         .hasRole("ADMIN")
-                    .antMatchers(HttpMethod.POST, "/api/usuarios/**")
+                    .antMatchers(HttpMethod.POST, "/api/users/**")
                         .permitAll()
                     .anyRequest().authenticated()
                 .and()
@@ -59,6 +60,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .addFilterBefore( jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         ;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception{
+        web.ignoring().antMatchers("/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**");
     }
 
 }

@@ -1,14 +1,11 @@
 package io.github.willianlds.security.jwt;
 
-import io.github.willianlds.VendasApplication;
-import io.github.willianlds.entity.Usuario;
+import io.github.willianlds.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -24,7 +21,7 @@ public class JwtService {
     @Value("${security.jwt.key-signature}")
     private String keySignature;
 
-    public String generatedToken(Usuario usuario){
+    public String generatedToken(User user){
         long expirationString = Long.valueOf(expiration);
         LocalDateTime dateHourExpiration = LocalDateTime.now().plusMinutes(expirationString);
         Instant instant = dateHourExpiration.atZone(ZoneId.systemDefault()).toInstant();
@@ -32,7 +29,7 @@ public class JwtService {
 
         return Jwts
                 .builder()
-                .setSubject(usuario.getUsername())
+                .setSubject(user.getUsername())
                 .setExpiration(dateExpiration)
                 .signWith(SignatureAlgorithm.HS512, keySignature)
                 .compact();

@@ -1,2 +1,2 @@
 # API-VendasApplication
-Aplicação voltada para estudo, UMA API RestFull realizando pedidos de produtos para determinados clientes
+Study-oriented application, A RestFul API placing product orders for certain clients.
